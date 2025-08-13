@@ -4,6 +4,8 @@ using Com.Ctrip.Framework.Apollo;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var apollo = builder.Configuration.GetSection("Apollo");
+
 builder.Host.ConfigureAppConfiguration((context, builder) =>
 {
     //k8s模式
@@ -20,11 +22,13 @@ builder.Host.ConfigureAppConfiguration((context, builder) =>
     //builder.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("RUN_ENV")}.json");
 
     //apollo 配置
-    var config = builder.Build().GetSection($"Apollo");
+    var config = builder.Build().GetSection("Apollo");
     var apollo = builder.AddApollo(config);
     foreach (var item in config.GetSection("namespaces").GetChildren())
     {
         apollo.AddNamespace(item.Get<string>());
+        //json格式配置
+        //.AddNamespace(item.Get<string>(), ConfigFileFormat.Json);
     }
 });
 
